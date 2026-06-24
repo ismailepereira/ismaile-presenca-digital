@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#F3EEE1" />
 
   <!-- SEO -->
   <title>Criação de Sites | Ismaile Pereira · Presença Digital</title>
@@ -46,17 +47,29 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 84px; color-scheme: light; }
     body {
       font-family: var(--font-body);
       color: var(--text);
       background: var(--cream);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-tap-highlight-color: rgba(190, 90, 48, 0.18);
     }
-    h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; color: var(--green-dark); }
+    h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; color: var(--green-dark); text-wrap: balance; }
+    p { text-wrap: pretty; }
     a { color: inherit; text-decoration: none; }
     img, svg { display: block; max-width: 100%; }
+
+    /* Pular para o conteúdo (acessibilidade via teclado) */
+    .skip-link {
+      position: absolute; left: 12px; top: -100px; z-index: 100;
+      background: var(--green-dark); color: var(--cream);
+      padding: 10px 16px; border-radius: 8px; font-weight: 600;
+      transition: top .2s ease;
+    }
+    .skip-link:focus { top: 12px; }
 
     .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
     .section { padding: 64px 0; }
@@ -70,7 +83,7 @@
       font-weight: 600; font-size: 16px;
       padding: 14px 26px; border-radius: 999px;
       transition: background .2s ease, transform .2s ease;
-      border: none; cursor: pointer;
+      border: none; cursor: pointer; touch-action: manipulation;
     }
     .btn:hover { background: var(--terracota-dark); transform: translateY(-2px); }
     .btn:active { transform: translateY(0); }
@@ -173,7 +186,7 @@
     .footer__bottom { border-top: 1px solid rgba(244,240,230,0.15); margin-top: 36px; padding-top: 22px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; }
 
     /* WhatsApp flutuante */
-    .wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 60; width: 58px; height: 58px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,0.25); transition: transform .2s; }
+    .wa-float { position: fixed; right: calc(18px + env(safe-area-inset-right)); bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 60; width: 58px; height: 58px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 18px rgba(0,0,0,0.25); transition: transform .2s; touch-action: manipulation; }
     .wa-float:hover { transform: scale(1.08); }
     .wa-float svg { width: 32px; height: 32px; }
 
@@ -204,10 +217,10 @@
     .card__icon { display: inline-block; transition: transform .3s ease; }
     .nav__links a { position: relative; }
     .nav__links a::after {
-      content: ""; position: absolute; left: 0; bottom: -4px; height: 2px; width: 0;
-      background: var(--terracota); transition: width .25s ease;
+      content: ""; position: absolute; left: 0; bottom: -4px; height: 2px; width: 100%;
+      background: var(--terracota); transform: scaleX(0); transform-origin: left; transition: transform .25s ease;
     }
-    .nav__links a:hover::after { width: 100%; }
+    .nav__links a:hover::after { transform: scaleX(1); }
     .project__link { transition: gap .2s ease, color .2s ease; display: inline-flex; gap: 4px; }
     .project:hover .project__link { gap: 10px; }
 
@@ -231,22 +244,22 @@
 
       /* Brilho passando no botão */
       .btn::after {
-        content: ""; position: absolute; top: 0; left: -130%; width: 55%; height: 100%;
+        content: ""; position: absolute; top: 0; left: 0; width: 55%; height: 100%;
         background: linear-gradient(120deg, transparent, rgba(255,255,255,.45), transparent);
-        transform: skewX(-20deg); transition: left .6s ease;
+        transform: translateX(-260%) skewX(-20deg); transition: transform .6s ease;
       }
-      .btn:hover::after { left: 150%; }
+      .btn:hover::after { transform: translateX(440%) skewX(-20deg); }
 
       /* Cards sobem no hover */
       .card:hover, .project:hover { transform: translateY(-6px); box-shadow: 0 18px 38px rgba(46,58,47,.15); }
       .card:hover .card__icon { transform: scale(1.18) rotate(-5deg); }
 
-      /* WhatsApp pulsando */
-      .wa-float { animation: waPulse 2.4s ease-in-out infinite; }
-      @keyframes waPulse {
-        0%,100% { box-shadow: 0 6px 18px rgba(0,0,0,.25), 0 0 0 0 rgba(37,211,102,.45); }
-        50%     { box-shadow: 0 6px 18px rgba(0,0,0,.25), 0 0 0 16px rgba(37,211,102,0); }
+      /* WhatsApp: anel pulsando (anima só transform/opacity) */
+      .wa-float::before {
+        content: ""; position: absolute; inset: 0; border-radius: 50%;
+        background: #25D366; z-index: -1; animation: waRing 2.4s ease-out infinite;
       }
+      @keyframes waRing { 0% { transform: scale(1); opacity: .5; } 70%, 100% { transform: scale(2.1); opacity: 0; } }
 
       /* Brilho animado no texto-destaque */
       .punch span {
@@ -259,6 +272,7 @@
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#inicio">Pular para o conteúdo</a>
 
   <!-- ============ HEADER ============ -->
   <header>
@@ -300,7 +314,7 @@
     <!-- ============ HERO ============ -->
     <section id="inicio" class="hero">
       <div class="container">
-        <img class="hero__logo" src="assets/logo.png" alt="Sol nascente — marca Ismaile Pereira Presença Digital" width="280" height="174" decoding="async" />
+        <img class="hero__logo" src="assets/logo.png" alt="Sol nascente — marca Ismaile Pereira Presença Digital" width="280" height="174" fetchpriority="high" decoding="async" />
         <h1>Quem não aparece no Google, não vende.</h1>
         <p>Faço sites profissionais pra negócios e profissionais de <strong>todo o Brasil</strong> — posicionados no Google e prontos pro cliente te chamar no WhatsApp. 100% online, sem enrolação, no prazo.</p>
         <a href="#" class="btn" data-wa>Falar comigo agora →</a>
@@ -376,7 +390,7 @@
             <div class="step__num">2</div>
             <div>
               <h3>Eu crio e você acompanha 🎨</h3>
-              <p>Monto seu site completo. Você vê antes de ir pro ar e pede ajustes. Nada publica sem o seu "ok".</p>
+              <p>Monto seu site completo. Você vê antes de ir pro ar e pede ajustes. Nada publica sem o seu “ok”.</p>
             </div>
           </div>
           <div class="step">
@@ -510,9 +524,9 @@
     /* =================================== */
 
     var waLink = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(MSG);
-    document.querySelectorAll("[data-wa]").forEach(function (a) { a.href = waLink; });
-    document.querySelectorAll("[data-ig]").forEach(function (a) { a.href = INSTAGRAM; });
-    document.querySelectorAll("[data-yt]").forEach(function (a) { a.href = YOUTUBE; });
+    document.querySelectorAll("[data-wa]").forEach(function (a) { a.href = waLink; a.target = "_blank"; a.rel = "noopener"; });
+    document.querySelectorAll("[data-ig]").forEach(function (a) { a.href = INSTAGRAM; a.target = "_blank"; a.rel = "noopener"; });
+    document.querySelectorAll("[data-yt]").forEach(function (a) { a.href = YOUTUBE; a.target = "_blank"; a.rel = "noopener"; });
 
     // Menu mobile
     var toggle = document.getElementById("navToggle");
